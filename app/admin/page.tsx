@@ -14,7 +14,9 @@ import {
   mdiScale, 
   mdiRuler, 
   mdiTrendingUp, 
-  mdiGenderTransgender
+  mdiGenderTransgender,
+  mdiChevronLeft,   // Icon baru untuk pagination
+  mdiChevronRight   // Icon baru untuk pagination
 } from '@mdi/js';
 
 import { Doughnut, Bar, Line } from 'react-chartjs-2';
@@ -43,6 +45,10 @@ export default function AdminOverview() {
   const [genderStats, setGenderStats] = useState({ male: 0, female: 0 });
   const [trendData, setTrendData] = useState<{labels: string[], values: number[]}>({ labels: [], values: [] });
 
+  // STATE UNTUK PAGINATION
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
   const fetchData = async () => {
     setLoading(true);
     const { data: predictions, error } = await supabase
@@ -53,8 +59,6 @@ export default function AdminOverview() {
     if (!error && predictions) {
       setData(predictions);
       
-
-
       // DATA TINGGI RENDAH
       const tinggi = predictions.filter(x => String(x.prediction_result).trim() === "Tinggi").length;
       const rendah = predictions.filter(x => String(x.prediction_result).trim() === "Rendah").length;
@@ -65,12 +69,10 @@ export default function AdminOverview() {
         rendah: rendah 
       });
 
-
       // DATA JENIS KELAMIN
       const male = predictions.filter(x => Number(x.gender) === 0).length;
       const female = predictions.filter(x => Number(x.gender) === 1).length;
       setGenderStats({ male, female });
-
 
       // DATA PENGGUNAAN WEB APP
       const last7Days = [...Array(7)].map((_, i) => {
@@ -89,7 +91,6 @@ export default function AdminOverview() {
 
   useEffect(() => { fetchData(); }, []);
 
-
   // EKSPOR CSV
   const exportToCSV = () => {
     if (data.length === 0) return;
@@ -106,6 +107,18 @@ export default function AdminOverview() {
     a.click();
   };
 
+  // LOGIKA PAGINATION
+  const totalPages = Math.ceil(data.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentData = data.slice(startIndex, startIndex + itemsPerPage);
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
 
   // CHART DATA TINGGI RENDAH
   const donutData = {
@@ -119,7 +132,6 @@ export default function AdminOverview() {
     }],
   };
 
-
   // CHART DATA JENIS KELAMIN
   const barData = {
     labels: ['Laki-laki', 'Perempuan'],
@@ -130,7 +142,6 @@ export default function AdminOverview() {
       barThickness: 35,
     }],
   };
-
 
   // CHART DATA PENGGUNAAN WEB APP
   const lineData = {
@@ -144,7 +155,6 @@ export default function AdminOverview() {
       tension: 0.4,
     }],
   };
-
 
   return (
     <div className="space-y-10 pb-20">
@@ -168,13 +178,11 @@ export default function AdminOverview() {
         <StatCard label="Kondisi Sehat" value={stats.rendah} icon={mdiCheckCircle} gradient="from-emerald-500 to-teal-400" />
       </div>
       
-
       {/* =========================================== */}
       {/* ================ DONUT CARD =============== */}
       {/* =========================================== */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <ChartContainer title="Distribusi Risiko" icon={mdiChartDonut}>
-
           <div className="flex flex-col md:flex-row items-center justify-around w-full gap-6">
             <div className="relative w-44 h-44">
               {stats.total > 0 ? (
@@ -186,19 +194,16 @@ export default function AdminOverview() {
               </div>
             </div>
 
-            <div className="space-y-3 w-full max-w-[180px]">
+            <div className="space-y-3 w-full max-w-45">
                <ChartLegend label="Tinggi" count={stats.tinggi} color="bg-rose-500" />
                <ChartLegend label="Rendah" count={stats.rendah} color="bg-emerald-500" />
             </div>
-
           </div>
         </ChartContainer>
-
 
         {/* =========================================== */}
         {/* ================ BAR CHART =============== */}
         {/* =========================================== */}
-
         <ChartContainer title="Jenis Kelamin" icon={mdiGenderTransgender}>
           <div className="w-full h-56 pt-2">
             <Bar data={barData} options={{ 
@@ -209,8 +214,6 @@ export default function AdminOverview() {
           </div>
         </ChartContainer>
       </div>
-
-
 
       {/* =========================================== */}
       {/* ================ LINE CHART =============== */}
@@ -226,8 +229,6 @@ export default function AdminOverview() {
           </div>
         </ChartContainer>
       </div>
-
-
 
       {/* =========================================== */}
       {/* ================== TABEL ================== */}
@@ -252,9 +253,10 @@ export default function AdminOverview() {
             </thead>
 
             <tbody>
-              {data.map((item) => (
+              {/* NOTE: Ubah data.map menjadi currentData.map */}
+              {currentData.map((item) => (
                 <tr key={item.id} className="group transition-all">
-                  <td className="bg-white/40 group-hover:bg-white/80 border-y border-l border-white/50 px-6 py-6 rounded-l-[2rem]">
+                  <td className="bg-white/40 group-hover:bg-white/80 border-y border-l border-white/50 px-6 py-6 rounded-l-4xl">
                     <div className="flex items-center gap-3">
                       <div className={`p-2 rounded-lg ${item.gender === 0 ? 'bg-blue-50 text-blue-500' : 'bg-pink-50 text-pink-500'}`}>
                         <Icon path={item.gender === 0 ? mdiGenderMale : mdiGenderFemale} size={0.6} />
@@ -274,7 +276,7 @@ export default function AdminOverview() {
                     {item.glucose ? `${item.glucose} mg/dL` : '-'}
                   </td>
 
-                  <td className="bg-white/40 group-hover:bg-white/80 border-y border-r border-white/50 px-6 py-6 rounded-r-[2rem] text-center">
+                  <td className="bg-white/40 group-hover:bg-white/80 border-y border-r border-white/50 px-6 py-6 rounded-r-4xl text-center">
                     <div className="flex flex-col items-center gap-1">
                       <span className={`px-5 py-1.5 rounded-xl text-[9px] font-bold uppercase tracking-widest transition-all
                         ${String(item.prediction_result).trim() === "Tinggi" 
@@ -286,11 +288,41 @@ export default function AdminOverview() {
                       <span className="text-[10px] font-medium text-slate-500">{(item.probability * 100).toFixed(0)}%</span>
                     </div>
                   </td>
-
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* =========================================== */}
+        {/* ======== UI CONTROLS PAGINATION =========== */}
+        {/* =========================================== */}
+        <div className="flex justify-between items-center mt-6 pt-6 border-t border-white/40 px-2">
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">
+            Menampilkan {data.length > 0 ? startIndex + 1 : 0} - {Math.min(startIndex + itemsPerPage, data.length)} dari {data.length} Data
+          </span>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handlePrevPage}
+              disabled={currentPage === 1}
+              className="p-2 bg-white/40 backdrop-blur-md rounded-2xl border border-white/70 text-[#005461] hover:bg-white hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-40 disabled:hover:translate-y-0 disabled:cursor-not-allowed transition-all"
+            >
+              <Icon path={mdiChevronLeft} size={0.8} />
+            </button>
+            
+            <div className="px-5 py-2 bg-white/40 backdrop-blur-md rounded-2xl border border-white/70 text-[10px] font-bold uppercase tracking-widest text-[#005461]">
+              Hal {currentPage} / {totalPages || 1}
+            </div>
+
+            <button
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages || totalPages === 0}
+              className="p-2 bg-white/40 backdrop-blur-md rounded-2xl border border-white/70 text-[#005461] hover:bg-white hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-40 disabled:hover:translate-y-0 disabled:cursor-not-allowed transition-all"
+            >
+              <Icon path={mdiChevronRight} size={0.8} />
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -300,12 +332,12 @@ export default function AdminOverview() {
 // UI
 function ChartContainer({ title, icon, children }: any) {
   return (
-    <div className="bg-white/60 backdrop-blur-xl p-8 rounded-[3rem] border border-white/80 shadow-xl flex flex-col min-h-[350px]">
+    <div className="bg-white/60 backdrop-blur-xl p-8 rounded-[3rem] border border-white/80 shadow-xl flex flex-col min-h-87.5">
       <div className="w-full flex justify-between items-center mb-6 px-2">
         <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">{title}</h4>
         <Icon path={icon} size={0.7} className="text-[#00B7B5]" />
       </div>
-      <div className="flex-grow flex items-center justify-center">
+      <div className="grow flex items-center justify-center">
         {children}
       </div>
     </div>
@@ -315,7 +347,7 @@ function ChartContainer({ title, icon, children }: any) {
 function StatCard({ label, value, icon, gradient }: any) {
   return (
     <div className="bg-white/60 backdrop-blur-xl p-8 rounded-[3rem] border border-white shadow-xl flex items-center gap-8 group">
-      <div className={`p-5 bg-gradient-to-tr ${gradient} text-white rounded-[2rem] shadow-lg group-hover:rotate-12 transition-all`}>
+      <div className={`p-5 bg-linear-to-tr ${gradient} text-white rounded-4xl shadow-lg group-hover:rotate-12 transition-all`}>
         <Icon path={icon} size={1.2} />
       </div>
       <div>
