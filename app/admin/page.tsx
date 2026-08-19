@@ -329,7 +329,7 @@ export default function AdminOverview() {
   );
 }
 
-// UI
+// User Inteface
 function ChartContainer({ title, icon, children }: any) {
   return (
     <div className="bg-white/60 backdrop-blur-xl p-8 rounded-[3rem] border border-white/80 shadow-xl flex flex-col min-h-87.5">
