@@ -1,0 +1,39 @@
+{
+  "name": "diabetes-checker",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@floating-ui/dom": "^1.7.5",
+    "@mdi/js": "^7.4.47",
+    "@mdi/react": "^1.6.1",
+    "@supabase/supabase-js": "^2.93.3",
+    "@tiptap/extension-text-align": "^3.18.0",
+    "@tiptap/extension-underline": "^3.18.0",
+    "@tiptap/react": "^3.18.0",
+    "@tiptap/starter-kit": "^3.18.0",
+    "aos": "^3.0.0-beta.6",
+    "chart.js": "^4.5.1",
+    "next": "16.1.4",
+    "onnxruntime-web": "^1.23.2",
+    "react": "19.2.3",
+    "react-chartjs-2": "^5.3.1",
+    "react-dom": "19.2.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/aos": "^3.0.7",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.4",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

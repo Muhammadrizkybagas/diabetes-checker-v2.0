@@ -1,0 +1,84 @@
+{
+  "model_type": "Logistic Regression (Pipeline: StandardScaler + LogisticRegression)",
+  "model_A": {
+    "name": "LR Diabetes Predictor \u2014 With Lab",
+    "features": [
+      "Gender",
+      "RIDAGEYR",
+      "BMXBMI",
+      "BMXWAIST",
+      "LBXGLU",
+      "Age_BMI_Interaction",
+      "Waist_BMI_Ratio",
+      "Age_Group",
+      "BMI_Category"
+    ],
+    "optimal_threshold": 0.694,
+    "metrics": {
+      "accuracy": 0.976,
+      "f1_dm": 0.9055,
+      "roc_auc": 0.9744,
+      "cm": [
+        [
+          1041,
+          18
+        ],
+        [
+          11,
+          139
+        ]
+      ]
+    },
+    "use_case": "User yang memiliki hasil gula darah puasa"
+  },
+  "model_B": {
+    "name": "LR Diabetes Predictor \u2014 Screening Awal",
+    "features": [
+      "Gender",
+      "RIDAGEYR",
+      "BMXBMI",
+      "BMXWAIST",
+      "Age_BMI_Interaction",
+      "Waist_BMI_Ratio",
+      "Age_Group",
+      "BMI_Category"
+    ],
+    "optimal_threshold": 0.482,
+    "metrics": {
+      "accuracy": 0.7006,
+      "f1_dm": 0.4046,
+      "roc_auc": 0.8073,
+      "cm": [
+        [
+          724,
+          335
+        ],
+        [
+          27,
+          123
+        ]
+      ]
+    },
+    "use_case": "Screening awal tanpa data laboratorium"
+  },
+  "preprocessing": {
+    "sentinel_value": "5.397605346934028e-79 \u2192 NaN",
+    "imputation": "Stratified Median per Diabetes label",
+    "scaling": "StandardScaler (fit pada train set only)",
+    "diabetes_definition": "HbA1c >= 6.5%",
+    "gender_encoding": "1 (Laki-laki) \u2192 0, 2 (Perempuan) \u2192 1",
+    "age_group_bins": {
+      "0": "<18",
+      "1": "18-39",
+      "2": "40-59",
+      "3": "60+"
+    },
+    "bmi_category_bins": {
+      "0": "<18.5",
+      "1": "18.5-24.9",
+      "2": "25-29.9",
+      "3": ">=30"
+    }
+  },
+  "note": "ONNX file sudah include StandardScaler \u2014 inference langsung tanpa scaling manual."
+}

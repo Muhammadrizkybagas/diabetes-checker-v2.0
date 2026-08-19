@@ -1,0 +1,104 @@
+{
+  "model_A": {
+    "name": "Diabetes Predictor \u2014 With Lab Results",
+    "features": [
+      "Gender",
+      "RIDAGEYR",
+      "BMXBMI",
+      "BMXWAIST",
+      "LBXGLU",
+      "Age_BMI_Interaction",
+      "Waist_BMI_Ratio",
+      "Age_Group",
+      "BMI_Category"
+    ],
+    "optimal_threshold": 0.44,
+    "metrics": {
+      "accuracy": 0.9735,
+      "f1_dm": 0.8954,
+      "roc_auc": 0.9831,
+      "cm": [
+        [
+          1040,
+          19
+        ],
+        [
+          13,
+          137
+        ]
+      ]
+    },
+    "use_case": "User yang memiliki hasil gula darah puasa dari laboratorium"
+  },
+  "model_B": {
+    "name": "Diabetes Predictor \u2014 Screening Awal",
+    "features": [
+      "Gender",
+      "RIDAGEYR",
+      "BMXBMI",
+      "BMXWAIST",
+      "Age_BMI_Interaction",
+      "Waist_BMI_Ratio",
+      "Age_Group",
+      "BMI_Category"
+    ],
+    "optimal_threshold": 0.09,
+    "metrics": {
+      "accuracy": 0.6791,
+      "f1_dm": 0.3802,
+      "roc_auc": 0.7882,
+      "cm": [
+        [
+          702,
+          357
+        ],
+        [
+          31,
+          119
+        ]
+      ]
+    },
+    "use_case": "Screening awal tanpa data laboratorium"
+  },
+  "preprocessing": {
+    "sentinel_value": "5.397605346934028e-79 \u2192 NaN",
+    "imputation": "Stratified Median per Diabetes label",
+    "diabetes_definition": "HbA1c >= 6.5%",
+    "gender_encoding": "1 (Laki-laki) \u2192 0, 2 (Perempuan) \u2192 1",
+    "age_group_bins": {
+      "0": "<18",
+      "1": "18-39",
+      "2": "40-59",
+      "3": "60+"
+    },
+    "bmi_category_bins": {
+      "0": "<18.5 (Underweight)",
+      "1": "18.5-24.9 (Normal)",
+      "2": "25-29.9 (Overweight)",
+      "3": ">=30 (Obese)"
+    }
+  },
+  "input_guide": {
+    "Model A input": {
+      "Gender": "0 = Laki-laki, 1 = Perempuan",
+      "RIDAGEYR": "Usia (tahun)",
+      "BMXBMI": "BMI (kg/m\u00b2)",
+      "BMXWAIST": "Lingkar Pinggang (cm)",
+      "LBXGLU": "Gula Darah Puasa (mg/dL)",
+      "Age_BMI_Interaction": "RIDAGEYR \u00d7 BMXBMI",
+      "Waist_BMI_Ratio": "BMXWAIST / BMXBMI",
+      "Age_Group": "Derived dari RIDAGEYR",
+      "BMI_Category": "Derived dari BMXBMI"
+    },
+    "Model B input": {
+      "Gender": "0 = Laki-laki, 1 = Perempuan",
+      "RIDAGEYR": "Usia (tahun)",
+      "BMXBMI": "BMI (kg/m\u00b2)",
+      "BMXWAIST": "Lingkar Pinggang (cm)",
+      "Age_BMI_Interaction": "RIDAGEYR \u00d7 BMXBMI",
+      "Waist_BMI_Ratio": "BMXWAIST / BMXBMI",
+      "Age_Group": "Derived dari RIDAGEYR",
+      "BMI_Category": "Derived dari BMXBMI"
+    }
+  }
+}
